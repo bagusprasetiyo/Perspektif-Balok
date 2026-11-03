@@ -1,0 +1,69 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Try Out Visual Spasial – Balok</title>
+<style>
+:root{--r:#c8102e;--rd:#8f0a21;--bg:#fff;--g:#f4f4f4;--t:#222;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--g);color:var(--t)}
+header{background:var(--r);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;box-shadow:0 3px 8px #0003}
+header b{font-size:16px}#tm{background:#fff;color:var(--r);font-weight:800;padding:6px 12px;border-radius:20px;font-variant-numeric:tabular-nums}
+main{max-width:760px;margin:0 auto;padding:16px}.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px #0001;border-top:5px solid var(--r);margin-bottom:14px}
+.btn{font:700 15px system-ui;border:0;border-radius:12px;padding:12px 18px;cursor:pointer;color:#fff;background:linear-gradient(#e0334f,var(--r));box-shadow:0 6px 0 var(--rd),0 8px 12px #0003;transform:translateY(0);transition:.08s;margin:4px 4px 10px}
+.btn:active{transform:translateY(5px);box-shadow:0 1px 0 var(--rd)}.btn.w{background:linear-gradient(#fff,#eee);color:var(--r);box-shadow:0 6px 0 #bbb,0 8px 12px #0002;border:2px solid var(--r)}.btn.w:active{box-shadow:0 1px 0 #bbb}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}.opt{border:3px solid #ddd;border-radius:14px;padding:6px;background:#fff;cursor:pointer;text-align:center;font-weight:700;box-shadow:0 5px 0 #ccc;transition:.08s}
+.opt:active{transform:translateY(4px);box-shadow:0 1px 0 #ccc}.opt.s{border-color:var(--r);background:#fff1f3;box-shadow:0 5px 0 var(--rd)}.opt.ok{border-color:#1a8f3c;background:#effaf1}.opt.no{border-color:var(--r);background:#fff1f3}
+svg{width:100%;max-height:230px}.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 10px}.chip{min-width:34px;height:34px;border-radius:8px;border:2px solid var(--r);background:#fff;color:var(--r);font-weight:700;cursor:pointer}.chip.d{background:var(--r);color:#fff}.chip.c{outline:3px solid #222}
+table.m{border-collapse:collapse;display:inline-table;margin:4px 8px}.m td{border:1px solid #999;width:24px;height:24px;text-align:center;font-size:13px}
+.ex{background:#fff8f8;border-left:4px solid var(--r);padding:10px 12px;border-radius:8px;font-size:14px;line-height:1.5;margin-top:8px}
+.hero{text-align:center}.hero h1{color:var(--r);margin:6px 0}.big{font-size:54px;font-weight:900;color:var(--r)}
+@media print{header,.noprint{display:none!important}body{background:#fff}.card{box-shadow:none;break-inside:avoid;border:1px solid #ccc}}
+.btn{background:var(--r);box-shadow:none;border-radius:8px;padding:11px 24px;font-weight:600;letter-spacing:.4px;transition:background .15s;margin:4px;transform:none}.btn:hover{background:var(--rd)}.btn:active{transform:none;box-shadow:none;background:#6f0818}.btn.w{background:#fff;color:var(--r);border:1.5px solid var(--r);box-shadow:none}.btn.w:hover{background:#fff1f3}.btn.w:active{background:#ffe3e8;box-shadow:none}.btn:disabled{opacity:.4;cursor:default}
+.opt{box-shadow:none;border:2px solid #d9d9d9;border-radius:10px;transition:border-color .15s,background .15s}.opt:hover{border-color:var(--r)}.opt:active{transform:none;box-shadow:none}.opt.s{box-shadow:none;border-color:var(--r);background:#fff1f3}.opt.ok,.opt.no{box-shadow:none}
+.qc{padding:12px 14px;margin-bottom:6px}.qc p{margin:4px 0 6px;font-size:14px;line-height:1.35}.qc>svg{max-height:21vh}.qc .opts{grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}.qc .opt{padding:4px;font-size:13px}.qc .opt svg{max-height:11vh}.chips{padding-bottom:6px}
+@media(max-width:600px){.btn{padding:9px 14px;font-size:14px}main{padding:10px}header{padding:8px 12px}}
+@media(min-width:820px){main{max-width:1040px}.qc{display:grid;grid-template-columns:1fr 1.15fr;column-gap:24px;align-content:start}.qc>b,.qc>p,.qc>svg{grid-column:1}.qc>svg{max-height:34vh;margin-top:6px}.qc>.opts{grid-column:2;grid-row:1/5;grid-template-columns:1fr 1fr;margin-top:0;align-content:start}.qc .opt svg{max-height:17vh}.qc p{font-size:16px}}
+</style></head><body>
+<header><b>Tes Psikologi Sudut Pandang Bangun Ruang</b><span id="tm">30:00</span></header><main id="app"></main>
+<script>
+const N=4,W=18,H=18;let qs=[],ans=[],cur=0,end=0,iv=null,done=false;
+const rot=g=>g.map((_,i)=>g[i].map((_,j)=>g[N-1-j][i])),mir=g=>g.map(r=>[...r].reverse()),key=g=>g.flat().join(''),cp=g=>g.map(r=>[...r]),sum=g=>g.flat().reduce((a,b)=>a+b,0);
+const rn=n=>Math.floor(Math.random()*n),R=(g,k)=>{for(let i=0;i<k;i++)g=rot(g);return g};
+const NM=["","90° berlawanan arah jarum jam","180°","90° searah jarum jam"];
+function svg(g,a){let s='<svg viewBox="'+(a?'-110 -80 220 180':'-80 -80 160 160')+'">';const P=(x,y,z)=>((x-y)*W)+','+((x+y)*W/2-z*H);const f=(a,c)=>`<polygon points="${a.map(p=>P(...p)).join(' ')}" fill="${c}" stroke="#222" stroke-width="1.2" stroke-linejoin="round"/>`;
+const L=[];for(let x=0;x<N;x++)for(let y=0;y<N;y++)for(let z=0;z<g[x][y];z++)L.push([x,y,z]);L.sort((a,b)=>a[0]+a[1]-b[0]-b[1]||a[2]-b[2]);
+for(const[x,y,z]of L){s+=f([[x+1,y,z],[x+1,y+1,z],[x+1,y+1,z+1],[x+1,y,z+1]],'#c9c9c9')+f([[x,y+1,z],[x+1,y+1,z],[x+1,y+1,z+1],[x,y+1,z+1]],'#9a9a9a')+f([[x,y,z+1],[x+1,y,z+1],[x+1,y+1,z+1],[x,y+1,z+1]],'#fff')}if(a){const c=2,p=t=>P(c+a[0]*t,c+a[1]*t,0).split(','),A=p(5.2),B=p(3.3),dx=B[0]-A[0],dy=B[1]-A[1],l=Math.hypot(dx,dy),ux=dx/l,uy=dy/l;
+s+=`<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]-ux*8}" y2="${B[1]-uy*8}" stroke="#c8102e" stroke-width="4" stroke-linecap="round"/><polygon points="${B[0]},${B[1]} ${B[0]-ux*14-uy*7},${B[1]-uy*14+ux*7} ${B[0]-ux*14+uy*7},${B[1]-uy*14-ux*7}" fill="#c8102e"/>`}return s+'</svg>'}
+const mat=g=>'<table class="m">'+g.map(r=>'<tr>'+r.map(v=>`<td>${v}</td>`).join('')+'</tr>').join('')+'</table>';
+function newQ0(){let g,k,ok;do{g=Array.from({length:N},()=>Array.from({length:N},()=>Math.random()<.62?1+rn(3):0));const t=sum(g);const rs=[0,1,2,3].map(i=>key(R(g,i)));ok=t>=8&&t<=22&&new Set(rs).size==4&&!rs.includes(key(mir(g)))&&g.flat().some(v=>v==3)}while(!ok);
+k=1+rn(3);const c=R(g,k);let opts=[{g:c,ok:1,why:'<b>Benar.</b> Ini hasil memutar denah '+NM[k]+'.'}];
+const m=mir(c);opts.push({g:m,why:'Salah. Ini <b>cerminan</b> jawaban benar: sisi kiri dan kanan tertukar, padahal pemutaran tidak membalik bangunan.'});
+let k2;do k2=1+rn(3);while(k2==k);opts.push({g:R(g,k2),why:`Salah. Ini tampilan jika bangunan diputar ${NM[k2]}, bukan ${NM[k]}.`});
+let d,tries=0;do{d=cp(c);const i=rn(N),j=rn(N);d[i][j]=(d[i][j]+(d[i][j]==0?1:(Math.random()<.5?-1:(d[i][j]<3?1:-1))));tries++}while([...opts.map(o=>key(o.g)),key(g)].includes(key(d))&&tries<50);
+opts.push({g:d,why:`Salah. Jumlah kubus berbeda (${sum(d)} kubus) dari bangunan asli (${sum(g)} kubus). Pemutaran tidak mengubah jumlah atau tinggi kubus.`});
+for(let i=3;i>0;i--){const j=rn(i+1);[opts[i],opts[j]]=[opts[j],opts[i]]}
+const ex=`<b>Langkah penyelesaian:</b><br>1. Catat tinggi tiap kolom pada denah atas (angka = jumlah kubus yang ditumpuk): ${mat(g)}<br>2. Putar denah ${NM[k]}. Tinggi kolom tidak berubah, hanya posisinya yang berpindah: ${mat(c)}<br>3. Cocokkan dengan gambar pilihan. Kolom tertinggi dan celah kosong harus berada di posisi yang sama. Total kubus tetap <b>${sum(g)}</b>.<br>4. Jawaban: <b>${'ABCDE'[opts.findIndex(o=>o.ok)]}</b>.<br><br>`+opts.map((o,i)=>`<b>${'ABCDE'[i]}.</b> ${o.why}`).join('<br>');
+return{g,k,opts,ex,c:opts.findIndex(o=>o.ok)}}
+
+const VS=[[0,1],[0,-1],[-1,0],[1,0]],VN=['DEPAN (Front View)','BELAKANG (Back View)','SAMPING KANAN (Right View)','SAMPING KIRI (Left View)'];
+const ph=(g,v)=>{const h=[];for(let k=0;k<N;k++){let m=0;for(let d=0;d<N;d++){const x=v==0?N-1-k:v==1?k:d,y=v==2?N-1-k:v==3?k:d;m=Math.max(m,g[x][y])}h.push(m)}return h},pg=h=>[0,1,2].map(r=>h.map(v=>v>=3-r?1:0));
+const g2=h=>'<svg viewBox="-4 -4 88 68" style="max-height:110px">'+pg(h).map((r,i)=>r.map((v,j)=>`<rect x="${j*20}" y="${i*20}" width="20" height="20" fill="${v?'#4a5568':'#fff'}" stroke="#9aa5b8"/>`).join('')).join('')+'</svg>';
+const fig=q=>q.t==1?svg(q.g,q.s):fig(q),osv=(q,o)=>q.t==1?g2(o.h):osv(q,o);
+const qt=q=>q.t==1?`Perhatikan tumpukan balok 3D. Manakah hasil proyeksi 2D-nya jika dilihat dari arah <b style="color:var(--r)">${VN[q.v]}</b>? (ikuti arah panah merah)`:`Bangunan balok di bawah ini <b>diputar ${NM[q.k]}</b> (dilihat dari atas). Manakah tampilan bangunan setelah diputar?`;
+function newQ1(){let g;do g=Array.from({length:N},()=>Array.from({length:N},()=>Math.random()<.62?1+rn(3):0));while(sum(g)<8||sum(g)>22||!g.flat().some(v=>v==3));
+const v=rn(4),H=[0,1,2,3].map(i=>ph(g,i)),c=H[v],seen=new Set([c.join('')]),opts=[{h:c,ok:1,why:'<b>Benar.</b> Tinggi terlihat dari arah ini: '+c.join(', ')+' kotak.'}];
+const add=(h,why)=>{if(opts.length<5&&!seen.has(h.join(''))){seen.add(h.join(''));opts.push({h,why})}};
+add([...c].reverse(),'Salah. Ini <b>cerminan</b> jawaban benar (kiri dan kanan tertukar). Perhatikan arah panah: urutan kolom dibaca dari sudut pandang pengamat.');
+H.forEach((h,i)=>{if(i!=v)add(h,`Salah. Ini proyeksi dari arah <b>${VN[i]}</b>, bukan ${VN[v]}.`)});
+let t=0;while(opts.length<5&&t++<300){const h=[...c],i=rn(N);h[i]=rn(4);add(h,`Salah. Tinggi kolom ke-${i+1} dari kiri seharusnya ${c[i]} kotak, bukan ${h[i]}.`)}
+for(let i=opts.length-1;i>0;i--){const j=rn(i+1);[opts[i],opts[j]]=[opts[j],opts[i]]}
+const ci=opts.findIndex(o=>o.ok);
+const ex=`<b>Langkah penyelesaian:</b><br>1. Denah atas (angka = tinggi tumpukan; baris = arah kanan-bawah pada gambar, kolom = arah kiri-bawah): ${mat(g)}<br>2. Panah merah menunjukkan arah pandang. Pengamat berdiri di sisi <b>${VN[v]}</b>. Tumpukan yang sejajar dengan arah pandang saling menutupi, jadi hanya yang <b>tertinggi</b> pada tiap jalur yang tampak.<br>3. Baca dari kiri ke kanan menurut pengamat: tinggi terlihat = <b>${c.join(', ')}</b> kotak.<br>4. Gambar proyeksi 2D: kolom setinggi h diisi h kotak dari bawah. Jawaban: <b>${'ABCDE'[ci]}</b>.<br><br>`+opts.map((o,i)=>`<b>${'ABCDE'[i]}.</b> ${o.why}`).join('<br>');
+return{t:1,g,v,s:VS[v],opts,ex,c:ci}}
+const newQ=()=>Math.random()<.6?newQ1():newQ0();
+const $=id=>document.getElementById(id),app=$('app');
+function start(){qs=[newQ()];ans=[null];cur=0;done=false;end=Date.now()+1800000;clearInterval(iv);iv=setInterval(tick,1000);tick();draw()}
+function tick(){let s=Math.max(0,Math.round((end-Date.now())/1000));$('tm').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(s<=0&&!done)finish(true)}
+function home(){$('tm').textContent='30:00';app.innerHTML=`<div class="card hero"><h1>Tes Psikologi Sudut Pandang Bangun Ruang</h1><button class="btn" onclick="start()">MULAI TRY OUT</button></div>`}
+function draw(){const q=qs[cur];app.innerHTML=`<div class="chips">${qs.map((_,i)=>`<button class="chip ${ans[i]!=null?'d':''} ${i==cur?'c':''}" onclick="cur=${i};draw()">${i+1}</button>`).join('')}</div><div class="card qc"><b>Soal ${cur+1}</b><p>${qt(q)}</p>${fig(q)}<div class="opts">${q.opts.map((o,i)=>`<div class="opt ${ans[cur]==i?'s':''}" onclick="ans[${cur}]=${i};draw()">${'ABCDE'[i]}${osv(q,o)}</div>`).join('')}</div></div><div style="text-align:center"><button class="btn w" ${cur?'':'disabled'} onclick="cur--;draw()">◀ Sebelumnya</button><button class="btn" onclick="nx()">Berikutnya ▶</button><br><button class="btn w" onclick="if(confirm('Selesaikan try out sekarang?'))finish()">Selesai &amp; Lihat Hasil</button></div>`;scrollTo(0,0)}
+function nx(){if(cur==qs.length-1){qs.push(newQ());ans.push(null)}cur++;draw()}
+function finish(auto){done=true;clearInterval(iv);const n=qs.length;let b=0,s=0,k=0;qs.forEach((q,i)=>{if(ans[i]==null)k++;else if(ans[i]==q.c)b++;else s++});const dn=b+s,pct=dn?Math.round(b/dn*100):0,used=Math.round((1800000-Math.max(0,end-Date.now()))/60000);
+app.innerHTML=`<div class="card hero"><h1>Hasil Try Out</h1>${auto===true?'<p><b>Waktu habis!</b> Try out berhenti otomatis.</p>':''}<div class="big">${pct}%</div><p>Benar <b>${b}</b> · Salah <b>${s}</b> · Dikerjakan ${dn} dari ${n} soal tersedia · Tidak dijawab ${k}<br>Waktu terpakai ±${used} menit · ${new Date().toLocaleString('id-ID')}</p><div class="noprint"><button class="btn" onclick="window.print()">⬇ UNDUH PDF</button><button class="btn w" onclick="start()">Ulangi Try Out</button><p style="font-size:12px;color:#666">Pada jendela cetak, pilih "Simpan sebagai PDF".</p></div></div><h2 style="color:var(--r)">Pembahasan Lengkap</h2>`+qs.map((q,i)=>{const a=ans[i];return`<div class="card"><b>Soal ${i+1}</b> — ${a==null?'⚪ Tidak dijawab':a==q.c?'✅ Benar':'❌ Salah'} (jawabanmu: ${a==null?'-':'ABCDE'[a]}, kunci: ${'ABCDE'[q.c]})<p>${qt(q)}</p><div style="max-width:240px;margin:auto">${fig(q)}</div><div class="opts">${q.opts.map((o,j)=>`<div class="opt ${j==q.c?'ok':(j==a?'no':'')}">${'ABCDE'[j]}${osv(q,o)}</div>`).join('')}</div><div class="ex">${q.ex}</div></div>`}).join('');scrollTo(0,0)}
+home();
+</script></body></html>
